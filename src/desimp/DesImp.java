@@ -26,6 +26,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  *
@@ -85,32 +86,38 @@ public class DesImp {
             //Now do encryption and then output to file called ciphertext.txt
             byte[] ciphertext = newDES.encrypt(plaintext, freshkey);
             PrintWriter writer = new PrintWriter("ciphertext.txt", "UTF-8");
-            //byte[] data = freshkey.getEncoded();
-            //System.out.println(data);
-            //writer.println(data); // how to print key TODO!
             String encodedKey = Base64.getEncoder().encodeToString(freshkey.getEncoded()).toString();
-            System.out.println(encodedKey); //how do we want this? in byte form or in ascii - ascii might be harder but reading in an formatted array of bytes is harder
-            writer.println(encodedKey);
-            writer.println(ciphertext);
-            //close file
 
+            byte[] encodedCiphertext = Base64.getEncoder().encode(ciphertext);
+            System.out.println(new String(encodedCiphertext));
+
+            System.out.println(encodedKey);
+            writer.println(encodedKey);
+            writer.println(new String(encodedCiphertext));
+            writer.close();
         } else if ("2".equals(eord)) { //user wants to decrypt file
             System.out.println("File named ciphertext.txt in the project file will be decrypted");
             DES newDES = new DES();
-            String ciphertext;
-            SecretKey keyin;
-
+            byte[] ciphertext;
+            SecretKey key_formatted;
+            String ciphertextin;
+            String keyin;
             //read in cipher text and keyin
+            try (BufferedReader br = new BufferedReader(new FileReader("ciphertext.txt"))) {
+                keyin = br.readLine();
+                ciphertextin = br.readLine();
+            }
+            byte[] decodedKey = Base64.getDecoder().decode(keyin);
+            key_formatted = new SecretKeySpec(decodedKey, 0, decodedKey.length, "DES/CBC/PKCS5Padding");
+            ciphertext = Base64.getDecoder().decode(ciphertextin);
             //now output plaintext to file called plaintext.txt
-            //byte[] plaintext = newDES.decrypt(ciphertextin, keyin);
-            PrintWriter writer = new PrintWriter("plaintext.txt", "UTF-8");
-            // writer.println(plaintext.toString());
+            String plaintext = newDES.decrypt(ciphertext, key_formatted);
+            try (PrintWriter writer = new PrintWriter("plaintext.txt", "UTF-8")) {
+                writer.println(plaintext);
+            }
         } else {
             System.out.println("Wrong input please Type 1 to encrypt a file or 2 to decrypt file");
         }
-
-        PrintWriter writer = new PrintWriter("ciphertext.txt", "UTF-8");
-        writer.println();
 
     }
 
