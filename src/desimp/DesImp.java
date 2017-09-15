@@ -84,9 +84,10 @@ public class DesImp {
                         + "'");
             }
             //Now do encryption and then output to file called ciphertext.txt
+            String encodedKey = Base64.getEncoder().encodeToString(freshkey.getEncoded());
+
             byte[] ciphertext = newDES.encrypt(plaintext, freshkey);
             PrintWriter writer = new PrintWriter("ciphertext.txt", "UTF-8");
-            String encodedKey = Base64.getEncoder().encodeToString(freshkey.getEncoded());
 
             byte[] encodedCiphertext = Base64.getEncoder().encode(ciphertext);
             System.out.println(encodedKey);
@@ -109,15 +110,20 @@ public class DesImp {
                 ciphertextin = br.readLine();
             }
             byte[] decodedKey = Base64.getDecoder().decode(keyin);
-            key_formatted = new SecretKeySpec(decodedKey, 0, decodedKey.length, "DES/CBC/PKCS5Padding");
+            key_formatted = new SecretKeySpec(decodedKey, 0, decodedKey.length, "DES");
             ciphertext = Base64.getDecoder().decode(ciphertextin);
+            System.out.println(key_formatted);
             //now output plaintext to file called plaintext.txt
-            String plaintext = newDES.decrypt(ciphertext, key_formatted);
+            byte[] plaintextbyte = newDES.decrypt(ciphertext, key_formatted);
+            //String plaintext = Base64.getEncoder().encodeToString(plaintextbyte);
+            String plaintext = new String(plaintextbyte, "UTF-8");
+            
+            
             try (PrintWriter writer = new PrintWriter("plaintext.txt", "UTF-8")) {
                 writer.println(plaintext);
                 writer.close();
             }
-            
+
         } else {
             System.out.println("Wrong input please Type 1 to encrypt a file or 2 to decrypt file");
         }

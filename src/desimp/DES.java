@@ -20,7 +20,7 @@ public class DES {
     public Cipher myDES;
 
     public DES() throws NoSuchAlgorithmException, NoSuchPaddingException {
-        myDES = Cipher.getInstance("DES/CBC/PKCS5Padding");
+        myDES = Cipher.getInstance("DES");
     }
 
     public byte[] encrypt(String plaintextin, SecretKey keyin) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
@@ -34,10 +34,14 @@ public class DES {
         return cipherText;
     }
 
-    public String decrypt(byte[] ciphertextin, SecretKey keyin) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public byte[] decrypt(byte[] ciphertextin, SecretKey keyin) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         System.out.println("entered the decrpt algorithm");
+       cipherText = ciphertextin;
+       key = keyin;
+        
+        System.out.println(key);
         myDES.init(Cipher.DECRYPT_MODE, key); //crashes here
         byte[] decryptedPlaintext = myDES.doFinal(cipherText);
-        return decryptedPlaintext.toString();
+        return decryptedPlaintext;
     }
 }
