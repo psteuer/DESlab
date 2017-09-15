@@ -86,15 +86,16 @@ public class DesImp {
             //Now do encryption and then output to file called ciphertext.txt
             byte[] ciphertext = newDES.encrypt(plaintext, freshkey);
             PrintWriter writer = new PrintWriter("ciphertext.txt", "UTF-8");
-            String encodedKey = Base64.getEncoder().encodeToString(freshkey.getEncoded()).toString();
+            String encodedKey = Base64.getEncoder().encodeToString(freshkey.getEncoded());
 
             byte[] encodedCiphertext = Base64.getEncoder().encode(ciphertext);
+            System.out.println(encodedKey);
             System.out.println(new String(encodedCiphertext));
 
-            System.out.println(encodedKey);
             writer.println(encodedKey);
             writer.println(new String(encodedCiphertext));
             writer.close();
+
         } else if ("2".equals(eord)) { //user wants to decrypt file
             System.out.println("File named ciphertext.txt in the project file will be decrypted");
             DES newDES = new DES();
@@ -114,7 +115,9 @@ public class DesImp {
             String plaintext = newDES.decrypt(ciphertext, key_formatted);
             try (PrintWriter writer = new PrintWriter("plaintext.txt", "UTF-8")) {
                 writer.println(plaintext);
+                writer.close();
             }
+            
         } else {
             System.out.println("Wrong input please Type 1 to encrypt a file or 2 to decrypt file");
         }
